@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slop Not</title>
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+            document.getElementById("submitBtn").disabled = false;
+        });
+        
+        function handleSubmit(event) {
+            event.preventDefault();
+            const inputText = document.getElementById("inputArea").value;
+            document.getElementById("outputArea").value = "";
+            const result = goProcessText(inputText);
+            document.getElementById("outputArea").value = result;
+        }
+    </script>
+</head>
+<body>
+	<p>Source: <a href="https://github.com/pointlander/slopnot">https://github.com/pointlander/slopnot</a></p>
+	<p>Enter at least 1K (1024 bytes) of text.</p>
+    <form id="form" onsubmit="handleSubmit(event)">
+        <label for="inputArea">Input Text:</label><br>
+        <textarea id="inputArea" rows="16" cols="100" placeholder="Enter at least 1k of text"></textarea><br>
+        
+        <button type="submit" id="submitBtn" disabled>Process</button>
+        <button type="reset" id="restBtn">Clear</button>
+    </form>
+	<script>
+		document.getElementById("form").addEventListener('reset', (event) => {
+			document.getElementById("outputArea").value = "";
+		});
+	</script>
+    <br>
+    <label for="outputArea">Results:</label><br>
+    <textarea id="outputArea" rows="16" cols="100" readonly></textarea>
+</body>
+</html>
